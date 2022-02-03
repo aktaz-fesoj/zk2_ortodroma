@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter.messagebox import showinfo
-from math import acos, cos, radians, sin, pi
-from turtle import width
+from math import acos, cos, radians, sin
 
 R=6371.11
 chyba = False
@@ -66,15 +65,16 @@ def delka_ortodromy():
         lon2 = lon2 * (-1)
     delta_lon = lon2-lon1
 
-    fi = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))
-    c = fi*R
-    lbl_vysledek.grid(row=2, column=0, pady=10)
-    return
+    if chyba == False:
+        fi = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))
+        c = round(fi*R,2)
+        lbl_vysledek = tk.Label(master=window, text = f"Délka ortodromy je {c} km.")
+        lbl_vysledek.grid(row=2, column=0, pady=10)
 
 #OKNO
 window = tk.Tk()
 window.title("Délka ortodromy")
-window.resizable(width=False, height=False)
+window.resizable(width=True, height=True)
 
 # VSTUPY
 orto_vstup = tk.Frame(master=window)
@@ -160,14 +160,8 @@ lbl_minuty_b_lon.grid(row=1, column=12, sticky="w")
 ent_vteriny_b_lon.grid(row=1, column=13, sticky="e")
 lbl_vteriny_b_lon.grid(row=1, column=14, sticky="w")
 
-#VÝPOČET-BUTTON + VÝSLEDEK
-vypocti_tlacitko = tk.Button(
-    master=window,
-    text="Vypočti délku ortodromy",
-    command=delka_ortodromy
-)
-
-lbl_vysledek = tk.Label(master=window, text = f"Délka ortodromy je {c} km.")
+#VÝPOČET_BUTTON + VÝSLEDEK
+vypocti_tlacitko = tk.Button(master=window, text="Vypočti délku ortodromy", command=delka_ortodromy)
 
 #HLAVNI_GRIDY
 orto_vstup.grid(row=0, column=0, padx=15)
