@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter.messagebox import showinfo
 from math import acos, cos, radians, sin, pi
-from tracemalloc import stop
 
 R=6371.11
 chyba = False
