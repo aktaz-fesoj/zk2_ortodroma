@@ -13,6 +13,7 @@ def stupne_desetinne(stup, min, vter):
                     stup(int): Stupně
                     min(int): Minuty
                     vter(int): Vteřiny
+        Returns:
                     stupne_des_vystup(float): Počet stupňů jako desetinné číslo
     """
     minuty_des = min/60
@@ -28,6 +29,7 @@ def ziskat_cisla(latlon, stupne, minuty, vteriny):
                     stupne(object): Entry object uchovávající informaci o počtu stupňů
                     minuty(object): Entry object uchovávající informaci o počtu minut
                     vteriny(object): Entry object uchovávající informaci o počtu vteřin
+        Returns:
                     stup(int): Stupně
                     min(int): Minuty
                     vter(int): Vteřiny
@@ -67,6 +69,8 @@ def ziskat_cisla(latlon, stupne, minuty, vteriny):
     return (st, min, vt)
 
 def delka_ortodromy():
+    """Funkce opočítá vzdálenost dvou bodů určených zeměpisnými souřadnicemi ve formátu WGS84. Výsledek vypíše do okna ze kterého byly brna vstupní data.
+    """
     global chyba
     global c
     chyba = False
@@ -85,12 +89,12 @@ def delka_ortodromy():
     delta_lon = lon2-lon1
 
     if chyba == False:
-        fi = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))
+        fi = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))      #Hlavní výpočet - délka ortodromy
         c = round(fi*R,2)
         lbl_vysledek = tk.Label(master=window, text = f"Délka ortodromy je {c} km.")
-        lbl_vysledek.grid(row=2, column=0, pady=10)
+        lbl_vysledek.grid(row=2, column=0, pady=10) 
 
-#OKNO
+#HLAVNI_OKNO
 window = tk.Tk()
 window.title("Délka ortodromy")
 window.resizable(width=True, height=True)
@@ -98,7 +102,7 @@ window.resizable(width=True, height=True)
 # VSTUPY
 orto_vstup = tk.Frame(master=window)
 
-#Bod A:
+    #Bod A:
 n_nebo_s = tk.StringVar(orto_vstup)
 n_nebo_s.set("N") #Základní hodnota budiž N
 e_nebo_w = tk.StringVar(orto_vstup)
@@ -120,7 +124,7 @@ lbl_minuty_a_lon = tk.Label(master=orto_vstup, text="'")
 ent_vteriny_a_lon = tk.Entry(master=orto_vstup, width=4)
 lbl_vteriny_a_lon = tk.Label(master=orto_vstup, text="''")
 
-#Bod B:
+    #Bod B:
 n_nebo_s_b = tk.StringVar(orto_vstup)
 n_nebo_s_b.set("N") #Základní hodnota budiž N
 e_nebo_w_b = tk.StringVar(orto_vstup)
@@ -143,7 +147,7 @@ ent_vteriny_b_lon = tk.Entry(master=orto_vstup, width=4)
 lbl_vteriny_b_lon = tk.Label(master=orto_vstup, text="''")
 
 #GRIDY_VSTUPY
-#Bod A:
+    #Bod A:
 bod_a.grid(row=0, column=0, sticky="e")
 volba_ns.grid(row=0, column=1, sticky="e")
 ent_stupne_a_lat.grid(row=0, column=2, sticky="e")
@@ -161,7 +165,7 @@ lbl_minuty_a_lon.grid(row=0, column=12, sticky="w")
 ent_vteriny_a_lon.grid(row=0, column=13, sticky="e")
 lbl_vteriny_a_lon.grid(row=0, column=14, sticky="w")
 
-#Bod B:
+    #Bod B:
 bod_b.grid(row=1, column=0, sticky="e")
 volba_ns_b.grid(row=1, column=1, sticky="e")
 ent_stupne_b_lat.grid(row=1, column=2, sticky="e")
@@ -179,12 +183,13 @@ lbl_minuty_b_lon.grid(row=1, column=12, sticky="w")
 ent_vteriny_b_lon.grid(row=1, column=13, sticky="e")
 lbl_vteriny_b_lon.grid(row=1, column=14, sticky="w")
 
-#VÝPOČET_BUTTON + VÝSLEDEK
+#VÝPOČET_BUTTON
 vypocti_tlacitko = tk.Button(master=window, text="Vypočti délku ortodromy", command=delka_ortodromy)
 
 #HLAVNI_GRIDY
 orto_vstup.grid(row=0, column=0, padx=15)
 vypocti_tlacitko.grid(row=1, column=0, pady=5)
+#grid výsledku ve fci delka_ortodromy
 
 #BĚH
 window.mainloop()
