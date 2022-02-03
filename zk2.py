@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter.messagebox import showinfo
 from math import acos, cos, radians, sin, pi
+from turtle import width
 
 R=6371.11
 chyba = False
+c = 0
 
 def stupne_desetinne(stup, min, vter):
     minuty_des = min/60
@@ -14,9 +16,18 @@ def stupne_desetinne(stup, min, vter):
 def ziskat_cisla(latlon, stupne, minuty, vteriny):
     global chyba
     try:
-        st = int(stupne.get())
-        min = int(minuty.get())
-        vt = int(vteriny.get())
+        if stupne.get() == "" or stupne.get() == " ":
+            st = 0
+        else:
+            st = int(stupne.get())
+        if minuty.get() == "" or minuty.get() == " ":
+            min = 0
+        else:
+            min = int(minuty.get())
+        if vteriny.get() == "" or vteriny.get() == " ":
+            vt = 0
+        else:
+            vt = int(vteriny.get())
     except ValueError: 
         showinfo("Chyba!", f"Některou ze zadaných hodnot nelze převést na celé číslo.\nZadávejte prosím celá čísla, nikoliv text či desetinná čísla.")
         st=0
@@ -39,6 +50,7 @@ def ziskat_cisla(latlon, stupne, minuty, vteriny):
 
 def delka_ortodromy():
     global chyba
+    global c
     chyba = False
     lat1 = stupne_desetinne(*ziskat_cisla("lat", ent_stupne_a_lat, ent_minuty_a_lat, ent_vteriny_a_lat))
     if n_nebo_s.get() == "S":
@@ -56,8 +68,7 @@ def delka_ortodromy():
 
     fi = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))
     c = fi*R
-    if chyba == False:
-        print(c)  
+    lbl_vysledek.grid(row=2, column=0, pady=10)
     return
 
 #OKNO
@@ -156,9 +167,11 @@ vypocti_tlacitko = tk.Button(
     command=delka_ortodromy
 )
 
+lbl_vysledek = tk.Label(master=window, text = f"Délka ortodromy je {c} km.")
+
 #HLAVNI_GRIDY
 orto_vstup.grid(row=0, column=0, padx=15)
-vypocti_tlacitko.grid(row=1, column=0)
+vypocti_tlacitko.grid(row=1, column=0, pady=5)
 
 #BĚH
 window.mainloop()
