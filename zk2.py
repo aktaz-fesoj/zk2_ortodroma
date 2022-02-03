@@ -7,12 +7,31 @@ chyba = False
 c = 0
 
 def stupne_desetinne(stup, min, vter):
+    """Funkce zpracuje údaje o počtu stupňů, minut a vteřin a vrátí úhel ve stupních jako desetinné číslo.
+
+        Parameters:
+                    stup(int): Stupně
+                    min(int): Minuty
+                    vter(int): Vteřiny
+                    stupne_des_vystup(float): Počet stupňů jako desetinné číslo
+    """
     minuty_des = min/60
     vteriny_des = vter/3600
     stupne_des_vystup = stup + minuty_des + vteriny_des
     return stupne_des_vystup
 
 def ziskat_cisla(latlon, stupne, minuty, vteriny):
+    """Funkce ošetřuje výjimky a neplatné vstupy pro stupně, minuty a vteřiny zeměpisné šířky či délky. Vrací pošet stupňů, minut a vteřin.
+
+        Parameters:
+                    latlon(str): "lat" pokud fce zpracovává zem. šířku, "lon" pokud fce zpracovává zem. délku
+                    stupne(object): Entry object uchovávající informaci o počtu stupňů
+                    minuty(object): Entry object uchovávající informaci o počtu minut
+                    vteriny(object): Entry object uchovávající informaci o počtu vteřin
+                    stup(int): Stupně
+                    min(int): Minuty
+                    vter(int): Vteřiny
+    """
     global chyba
     try:
         if stupne.get() == "" or stupne.get() == " ":
