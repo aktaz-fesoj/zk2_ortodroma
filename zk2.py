@@ -1,32 +1,39 @@
 import tkinter as tk
+from tkinter.messagebox import showinfo
 from math import acos, cos, radians, sin, pi
 
 R=6371.11
+
 def stupne_desetinne(stup, min, vter):
     minuty_des = min/60
     vteriny_des = vter/3600
     stupne_des_vystup = stup + minuty_des + vteriny_des
     return stupne_des_vystup
 
+def ziskat_cisla(stupne, minuty, vteriny):
+    st = int(stupne.get())
+    min = int(minuty.get())
+    vt = int(vteriny.get())
+    return (st, min, vt)
 
 def delka_ortodromy():
-    lat1 = stupne_desetinne(int(ent_stupne_a_lat.get()), int(ent_minuty_a_lat.get()), int(ent_vteriny_a_lat.get()))
-    if volba_ns == "S":
+    lat1 = stupne_desetinne(*ziskat_cisla(ent_stupne_a_lat, ent_minuty_a_lat, ent_vteriny_a_lat))
+    if n_nebo_s.get() == "S":
         lat1 = lat1 * (-1)
     lat2 = stupne_desetinne(int(ent_stupne_b_lat.get()), int(ent_minuty_b_lat.get()), int(ent_vteriny_b_lat.get()))
-    if volba_ns_b == "S":
+    if n_nebo_s_b.get() == "S":
         lat2 = lat2 * (-1)
     lon1 = stupne_desetinne(int(ent_stupne_a_lon.get()), int(ent_minuty_a_lon.get()), int(ent_vteriny_a_lon.get()))
-    if volba_ew == "W":
+    if e_nebo_w.get() == "W":
         lon1 = lon1 * (-1)
     lon2 = stupne_desetinne(int(ent_stupne_b_lon.get()), int(ent_minuty_b_lon.get()), int(ent_vteriny_b_lon.get()))
-    if volba_ew_b == "W":
+    if e_nebo_w_b.get() == "W":
         lon2 = lon2 * (-1)
     delta_lon = lon2-lon1
 
     fi = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))
     c = fi*R
-    print(c)    
+    print(c)  
     return c
 
 #OKNO
@@ -118,7 +125,7 @@ lbl_minuty_b_lon.grid(row=1, column=12, sticky="w")
 ent_vteriny_b_lon.grid(row=1, column=13, sticky="e")
 lbl_vteriny_b_lon.grid(row=1, column=14, sticky="w")
 
-
+print(volba_ns)
 #VÝPOČET-BUTTON + VÝSLEDEK
 vypocti_tlacitko = tk.Button(
     master=window,
