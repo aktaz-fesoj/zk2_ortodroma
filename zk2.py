@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter.messagebox import showinfo
 from math import acos, cos, radians, sin, pi
+from tracemalloc import stop
 
 R=6371.11
+chyba = False
 
 def stupne_desetinne(stup, min, vter):
     minuty_des = min/60
@@ -10,31 +12,54 @@ def stupne_desetinne(stup, min, vter):
     stupne_des_vystup = stup + minuty_des + vteriny_des
     return stupne_des_vystup
 
-def ziskat_cisla(stupne, minuty, vteriny):
-    st = int(stupne.get())
-    min = int(minuty.get())
-    vt = int(vteriny.get())
+def ziskat_cisla(latlon, stupne, minuty, vteriny):
+    global chyba
+    try:
+        st = int(stupne.get())
+        min = int(minuty.get())
+        vt = int(vteriny.get())
+    except ValueError: 
+        showinfo("Chyba!", f"Některou ze zadaných hodnot nelze převést na celé číslo.\nZadávejte prosím celá čísla, nikoliv text či desetinná čísla.")
+        st=0
+        min=0
+        vt=0
+        chyba = True
+    if latlon == "lat" and (st > 90 or st < 0):
+        showinfo("Nevalidní souřadnice!", f"Stupně zeměpisné šířky musejí být celým číslem z intervalu <0,90>. Tato podmínka nebyla splněna.\nOpravte prosím data a zkuste to znovu.")
+        chyba = True
+    elif latlon == "lon" and (st > 180 or st < 0):
+        showinfo("Nevalidní souřadnice!", f"Stupně zeměpisné délky musejí být celým číslem z intervalu <0,180>. Tato podmínka nebyla splněna.\nOpravte prosím data a zkuste to znovu.")
+        chyba = True
+    if min > 59 or min < 0:
+        showinfo("Nevalidní souřadnice!", f"Minuty zeměpisné šířky a délky musejí být celým číslem z intervalu <0,59>. Tato podmínka nebyla splněna.\nOpravte prosím data a zkuste to znovu.")
+        chyba = True
+    if vt > 59 or vt < 0:
+        showinfo("Nevalidní souřadnice!", f"Vteřiny zeměpisné šířky a délky musejí být celým číslem z intervalu <0,59>. Tato podmínka nebyla splněna.\nOpravte prosím data a zkuste to znovu.")
+        chyba = True
     return (st, min, vt)
 
 def delka_ortodromy():
-    lat1 = stupne_desetinne(*ziskat_cisla(ent_stupne_a_lat, ent_minuty_a_lat, ent_vteriny_a_lat))
+    global chyba
+    chyba = False
+    lat1 = stupne_desetinne(*ziskat_cisla("lat", ent_stupne_a_lat, ent_minuty_a_lat, ent_vteriny_a_lat))
     if n_nebo_s.get() == "S":
         lat1 = lat1 * (-1)
-    lat2 = stupne_desetinne(int(ent_stupne_b_lat.get()), int(ent_minuty_b_lat.get()), int(ent_vteriny_b_lat.get()))
+    lat2 = stupne_desetinne(*ziskat_cisla("lat", ent_stupne_b_lat, ent_minuty_b_lat, ent_vteriny_b_lat))
     if n_nebo_s_b.get() == "S":
         lat2 = lat2 * (-1)
-    lon1 = stupne_desetinne(int(ent_stupne_a_lon.get()), int(ent_minuty_a_lon.get()), int(ent_vteriny_a_lon.get()))
+    lon1 = stupne_desetinne(*ziskat_cisla("lon", ent_stupne_a_lon, ent_minuty_a_lon, ent_vteriny_a_lon))
     if e_nebo_w.get() == "W":
         lon1 = lon1 * (-1)
-    lon2 = stupne_desetinne(int(ent_stupne_b_lon.get()), int(ent_minuty_b_lon.get()), int(ent_vteriny_b_lon.get()))
+    lon2 = stupne_desetinne(*ziskat_cisla("lon", ent_stupne_b_lon, ent_minuty_b_lon, ent_vteriny_b_lon))
     if e_nebo_w_b.get() == "W":
         lon2 = lon2 * (-1)
     delta_lon = lon2-lon1
 
     fi = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))
     c = fi*R
-    print(c)  
-    return c
+    if chyba == False:
+        print(c)  
+    return
 
 #OKNO
 window = tk.Tk()
@@ -125,7 +150,6 @@ lbl_minuty_b_lon.grid(row=1, column=12, sticky="w")
 ent_vteriny_b_lon.grid(row=1, column=13, sticky="e")
 lbl_vteriny_b_lon.grid(row=1, column=14, sticky="w")
 
-print(volba_ns)
 #VÝPOČET-BUTTON + VÝSLEDEK
 vypocti_tlacitko = tk.Button(
     master=window,
