@@ -21,6 +21,13 @@ def decimal_degrees(deg, min, sec):
     degrees_dec_output = deg + minutes_dec + seconds_dec
     return degrees_dec_output
 
+def interval_control(c, a, b, text):
+    global error_v
+    if c < a or c > b:
+        error_v = True
+        showinfo("Invalid coordinates!", f"{text} have to be integer between {b} and {c}. This condition was not met.\nTry again after correcting the input data.")
+
+
 def earn_numbers(latlon, degrees, minutes, seconds):
     """Function treats exceptions and invalid inputs of degrees, minutes and seconds of latitude and longitude. Returns degrees, minutes and seconds.
 
@@ -54,19 +61,14 @@ def earn_numbers(latlon, degrees, minutes, seconds):
         min=0
         sc=0
         error_v = True
-    if latlon == "lat" and (dg > 90 or dg < 0):
-        showinfo("Invalid coordinates!", f"Degrees of latitude have to be integer between 0 and 90. This condition was not met.\nTry again after correcting the input data.")
-        error_v = True
-    elif latlon == "lon" and (dg > 180 or dg < 0):
-        showinfo("Invalid coordinates!", f"Degrees of lontitude have to be integer between 0 and 180. This condition was not met.\nTry again after correcting the input data.")
-        error_v = True
-    if min > 59 or min < 0:
-        showinfo("Invalid coordinates!", f"Minutes of latitude and longitude have to be integer between 0 and 59. This condition was not met.\nTry again after correcting the input data.")
-        error_v = True
-    if sc > 59 or sc < 0:
-        showinfo("Invalid coordinates!", f"Seconds of latitude and longitude have to be integer between 0 and 59. This condition was not met.\nTry again after correcting the input data.")
-        error_v = True
+    if latlon == "lat":
+        interval_control(dg, 0, 90, "Degrees of latitude")
+    elif latlon == "lon":
+        interval_control(dg, 0, 180, "Degrees of longitude")
+    interval_control(min, 0, 59, "Minutes of latitude and longitude")
+    interval_control(sc, 0, 59, "Seconds of latitude and longitude")
     return (dg, min, sc)
+
 
 def orthodrome_lenght():
     """Function count distance between two points given in WGS84 coordinate system. Result will be written to the main window.
