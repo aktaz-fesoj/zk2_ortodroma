@@ -3,12 +3,12 @@ from tkinter.messagebox import showinfo
 from math import acos, cos, radians, sin
 
 R=6371.11
-error_v = False
+error_g = False
 c = 0
 
 def decimal_degrees(deg, min, sec):
-    """Funkce zpracuje údaje o počtu dgupňů, minut a sceřin a vrátí úhel ve dgupních jako desetinné číslo.
-        Function takes numbers of degrees, minutes and seconds and returns angle measured in degrees -> as a decimal number
+    """Function takes numbers of degrees, minutes and seconds and returns angle measured in degrees -> as a decimal number
+
         Parameters:
                     deg(int): Degrees
                     min(int): Minutes
@@ -22,10 +22,10 @@ def decimal_degrees(deg, min, sec):
     return degrees_dec_output
 
 def interval_control(c, a, b, text):
-    global error_v
+    global error_g
     if c < a or c > b:
-        error_v = True
-        showinfo("Invalid coordinates!", f"{text} have to be integer between {b} and {c}. This condition was not met.\nTry again after correcting the input data.")
+        error_g = True
+        showinfo("Invalid coordinates!", f"{text} have to be integer between {a} and {b}. This condition was not met.\nTry again after correcting the input data.")
 
 
 def earn_numbers(latlon, degrees, minutes, seconds):
@@ -41,7 +41,7 @@ def earn_numbers(latlon, degrees, minutes, seconds):
                     min(int): minutes
                     sc(int): seconds
     """
-    global error_v
+    global error_g
     try:
         if degrees.get() == "" or degrees.get() == " ":
             dg = 0
@@ -60,7 +60,7 @@ def earn_numbers(latlon, degrees, minutes, seconds):
         dg=0
         min=0
         sc=0
-        error_v = True
+        error_g = True
     if latlon == "lat":
         interval_control(dg, 0, 90, "Degrees of latitude")
     elif latlon == "lon":
@@ -69,13 +69,20 @@ def earn_numbers(latlon, degrees, minutes, seconds):
     interval_control(sc, 0, 59, "Seconds of latitude and longitude")
     return (dg, min, sc)
 
-
-def orthodrome_lenght():
-    """Function count distance between two points given in WGS84 coordinate system. Result will be written to the main window.
+def orthodrome_lenght(lat1, lon1, lat2, lon2, R):
+    """Function counts distance between two points given in WGS84 coordinate system. Result will be written to the main window.
     """
-    global error_v
-    global c
-    error_v = False
+    delta_lon = lon2-lon1
+
+    sig = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))
+    c = round(sig*R,2)
+    lbl_result = tk.Label(master=window, text = f"Orthodrome lenght is {c} km.")
+    lbl_result.grid(row=2, column=0, pady=10)
+
+def click_ortho_button():
+    global error_g
+    error_g = False
+
     lat1 = decimal_degrees(*earn_numbers("lat", ent_degrees_a_lat, ent_minutes_a_lat, ent_seconds_a_lat))
     if n_or_s.get() == "S":
         lat1 = lat1 * (-1)
@@ -88,13 +95,9 @@ def orthodrome_lenght():
     lon2 = decimal_degrees(*earn_numbers("lon", ent_degrees_b_lon, ent_minutes_b_lon, ent_seconds_b_lon))
     if e_or_w_b.get() == "W":
         lon2 = lon2 * (-1)
-    delta_lon = lon2-lon1
 
-    if error_v == False:
-        fi = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))      #Hlavní výpočet - délka ortodromy
-        c = round(fi*R,2)
-        lbl_vysledek = tk.Label(madger=window, text = f"Délka ortodromy je {c} km.")
-        lbl_vysledek.grid(row=2, column=0, pady=10) 
+    if error_g == False:
+        orthodrome_lenght(lat1, lon1, lat2, lon2, R)
 
 #MAIN_WINDOW
 window = tk.Tk()
@@ -102,51 +105,51 @@ window.title("Orthodrome lenght")
 window.resizable(width=True, height=True)
 
 # INPUTS
-ortho_input = tk.Frame(madger=window)
+ortho_input = tk.Frame(master=window)
 
     #Point A:
-n_or_s = tk.dgringVar(ortho_input)
+n_or_s = tk.StringVar(ortho_input)
 n_or_s.set("N")
-e_or_w = tk.dgringVar(ortho_input)
+e_or_w = tk.StringVar(ortho_input)
 e_or_w.set("E")
 
-bod_a = tk.Label(madger=ortho_input, text="Coordinates of point A:  ")
+bod_a = tk.Label(master=ortho_input, text="Coordinates of point A:  ")
 choice_ns = tk.OptionMenu(ortho_input, n_or_s, "N", "S")
-ent_degrees_a_lat = tk.Entry(madger=ortho_input, width=3)
-lbl_degrees_a_lat = tk.Label(madger=ortho_input, text="°")
-ent_minutes_a_lat = tk.Entry(madger=ortho_input, width=2)
-lbl_minutes_a_lat = tk.Label(madger=ortho_input, text="'")
-ent_seconds_a_lat = tk.Entry(madger=ortho_input, width=4)
-lbl_seconds_a_lat = tk.Label(madger=ortho_input, text="''")
+ent_degrees_a_lat = tk.Entry(master=ortho_input, width=3)
+lbl_degrees_a_lat = tk.Label(master=ortho_input, text="°")
+ent_minutes_a_lat = tk.Entry(master=ortho_input, width=2)
+lbl_minutes_a_lat = tk.Label(master=ortho_input, text="'")
+ent_seconds_a_lat = tk.Entry(master=ortho_input, width=4)
+lbl_seconds_a_lat = tk.Label(master=ortho_input, text="''")
 choice_ew = tk.OptionMenu(ortho_input, e_or_w, "E", "W")
-ent_degrees_a_lon = tk.Entry(madger=ortho_input, width=3)
-lbl_degrees_a_lon = tk.Label(madger=ortho_input, text="°")
-ent_minutes_a_lon = tk.Entry(madger=ortho_input, width=2)
-lbl_minutes_a_lon = tk.Label(madger=ortho_input, text="'")
-ent_seconds_a_lon = tk.Entry(madger=ortho_input, width=4)
-lbl_seconds_a_lon = tk.Label(madger=ortho_input, text="''")
+ent_degrees_a_lon = tk.Entry(master=ortho_input, width=3)
+lbl_degrees_a_lon = tk.Label(master=ortho_input, text="°")
+ent_minutes_a_lon = tk.Entry(master=ortho_input, width=2)
+lbl_minutes_a_lon = tk.Label(master=ortho_input, text="'")
+ent_seconds_a_lon = tk.Entry(master=ortho_input, width=4)
+lbl_seconds_a_lon = tk.Label(master=ortho_input, text="''")
 
     #Point B:
-n_or_s_b = tk.dgringVar(ortho_input)
+n_or_s_b = tk.StringVar(ortho_input)
 n_or_s_b.set("N")
-e_or_w_b = tk.dgringVar(ortho_input)
+e_or_w_b = tk.StringVar(ortho_input)
 e_or_w_b.set("E")
 
-bod_b = tk.Label(madger=ortho_input, text="Coordinates of point B:  ")
+bod_b = tk.Label(master=ortho_input, text="Coordinates of point B:  ")
 choice_ns_b = tk.OptionMenu(ortho_input, n_or_s_b, "N", "S")
-ent_degrees_b_lat = tk.Entry(madger=ortho_input, width=3)
-lbl_degrees_b_lat = tk.Label(madger=ortho_input, text="°")
-ent_minutes_b_lat = tk.Entry(madger=ortho_input, width=2)
-lbl_minutes_b_lat = tk.Label(madger=ortho_input, text="'")
-ent_seconds_b_lat = tk.Entry(madger=ortho_input, width=4)
-lbl_seconds_b_lat = tk.Label(madger=ortho_input, text="''")
+ent_degrees_b_lat = tk.Entry(master=ortho_input, width=3)
+lbl_degrees_b_lat = tk.Label(master=ortho_input, text="°")
+ent_minutes_b_lat = tk.Entry(master=ortho_input, width=2)
+lbl_minutes_b_lat = tk.Label(master=ortho_input, text="'")
+ent_seconds_b_lat = tk.Entry(master=ortho_input, width=4)
+lbl_seconds_b_lat = tk.Label(master=ortho_input, text="''")
 choice_ew_b = tk.OptionMenu(ortho_input, e_or_w_b, "E", "W")
-ent_degrees_b_lon = tk.Entry(madger=ortho_input, width=3)
-lbl_degrees_b_lon = tk.Label(madger=ortho_input, text="°")
-ent_minutes_b_lon = tk.Entry(madger=ortho_input, width=2)
-lbl_minutes_b_lon = tk.Label(madger=ortho_input, text="'")
-ent_seconds_b_lon = tk.Entry(madger=ortho_input, width=4)
-lbl_seconds_b_lon = tk.Label(madger=ortho_input, text="''")
+ent_degrees_b_lon = tk.Entry(master=ortho_input, width=3)
+lbl_degrees_b_lon = tk.Label(master=ortho_input, text="°")
+ent_minutes_b_lon = tk.Entry(master=ortho_input, width=2)
+lbl_minutes_b_lon = tk.Label(master=ortho_input, text="'")
+ent_seconds_b_lon = tk.Entry(master=ortho_input, width=4)
+lbl_seconds_b_lon = tk.Label(master=ortho_input, text="''")
 
 #GRIDS_INPUTS
     #Point A:
@@ -185,10 +188,10 @@ lbl_minutes_b_lon.grid(row=1, column=12, sticky="w")
 ent_seconds_b_lon.grid(row=1, column=13, sticky="e")
 lbl_seconds_b_lon.grid(row=1, column=14, sticky="w")
 
-#VÝPOČET_BUTTON
-count_button = tk.Button(madger=window, text="Count orthodrome lenght", command=orthodrome_lenght)
+#COUNT_BUTTON
+count_button = tk.Button(master=window, text="Count orthodrome lenght", command=click_ortho_button)
 
-#HLAVNI_GRIDY
+#MAIN_GRIPS
 ortho_input.grid(row=0, column=0, padx=15)
 count_button.grid(row=1, column=0, pady=5)
 #grid result in function orthodrome_lenght
