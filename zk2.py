@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter.messagebox import showinfo
-from math import acos, cos, radians, sin
+from math import acos, cos, radians, sin, pi
+import sys
 
+eps = sys.float_info.epsilon
 R=6371.11
 error_g = False
-c = 0
 
 def decimal_degrees(deg, min, sec):
     """Function takes numbers of degrees, minutes and seconds and returns angle measured in degrees -> as a decimal number
@@ -73,31 +74,37 @@ def orthodrome_lenght(lat1, lon1, lat2, lon2, R):
     """Function counts distance between two points given in WGS84 coordinate system. Result will be written to the main window.
     """
     delta_lon = lon2-lon1
-
-    sig = acos(cos(radians(90-lat1))*cos(radians(90-lat2))+sin(radians(90-lat1))*sin(radians(90-lat2))*cos(radians(delta_lon)))
+    inside_acos = cos(0.5*pi-lat1)*cos(0.5*pi-lat2)+sin(0.5*pi-lat1)*sin(0.5*pi-lat2)*cos(delta_lon)
+    if (abs(inside_acos)-1 > eps):
+        print("An error occured. Value for arcus cosinus function is out of domain. The program has stopped.")
+    if (abs(inside_acos)-1 < eps):
+        round(inside_acos, 0)
+    sig = acos(inside_acos)
     c = round(sig*R,2)
-    lbl_result = tk.Label(master=window, text = f"Orthodrome lenght is {c} km.")
-    lbl_result.grid(row=2, column=0, pady=10)
+    return c
+    
 
 def click_ortho_button():
     global error_g
     error_g = False
 
-    lat1 = decimal_degrees(*earn_numbers("lat", ent_degrees_a_lat, ent_minutes_a_lat, ent_seconds_a_lat))
+    lat1 = radians(decimal_degrees(*earn_numbers("lat", ent_degrees_a_lat, ent_minutes_a_lat, ent_seconds_a_lat)))
     if n_or_s.get() == "S":
         lat1 = lat1 * (-1)
-    lat2 = decimal_degrees(*earn_numbers("lat", ent_degrees_b_lat, ent_minutes_b_lat, ent_seconds_b_lat))
+    lat2 = radians(decimal_degrees(*earn_numbers("lat", ent_degrees_b_lat, ent_minutes_b_lat, ent_seconds_b_lat)))
     if n_or_s_b.get() == "S":
         lat2 = lat2 * (-1)
-    lon1 = decimal_degrees(*earn_numbers("lon", ent_degrees_a_lon, ent_minutes_a_lon, ent_seconds_a_lon))
+    lon1 = radians(decimal_degrees(*earn_numbers("lon", ent_degrees_a_lon, ent_minutes_a_lon, ent_seconds_a_lon)))
     if e_or_w.get() == "W":
         lon1 = lon1 * (-1)
-    lon2 = decimal_degrees(*earn_numbers("lon", ent_degrees_b_lon, ent_minutes_b_lon, ent_seconds_b_lon))
+    lon2 = radians(decimal_degrees(*earn_numbers("lon", ent_degrees_b_lon, ent_minutes_b_lon, ent_seconds_b_lon)))
     if e_or_w_b.get() == "W":
         lon2 = lon2 * (-1)
 
     if error_g == False:
-        orthodrome_lenght(lat1, lon1, lat2, lon2, R)
+        c = orthodrome_lenght(lat1, lon1, lat2, lon2, R)
+        lbl_result = tk.Label(master=window, text = f"Orthodrome lenght is {c} km.")
+        lbl_result.grid(row=2, column=0, pady=10)
 
 #MAIN_WINDOW
 window = tk.Tk()
@@ -116,17 +123,23 @@ e_or_w.set("E")
 bod_a = tk.Label(master=ortho_input, text="Coordinates of point A:  ")
 choice_ns = tk.OptionMenu(ortho_input, n_or_s, "N", "S")
 ent_degrees_a_lat = tk.Entry(master=ortho_input, width=3)
+ent_degrees_a_lat.insert(0,"00")
 lbl_degrees_a_lat = tk.Label(master=ortho_input, text="°")
 ent_minutes_a_lat = tk.Entry(master=ortho_input, width=2)
+ent_minutes_a_lat.insert(0,"00")
 lbl_minutes_a_lat = tk.Label(master=ortho_input, text="'")
 ent_seconds_a_lat = tk.Entry(master=ortho_input, width=4)
+ent_seconds_a_lat.insert(0,"000")
 lbl_seconds_a_lat = tk.Label(master=ortho_input, text="''")
 choice_ew = tk.OptionMenu(ortho_input, e_or_w, "E", "W")
 ent_degrees_a_lon = tk.Entry(master=ortho_input, width=3)
+ent_degrees_a_lon.insert(0,"000")
 lbl_degrees_a_lon = tk.Label(master=ortho_input, text="°")
 ent_minutes_a_lon = tk.Entry(master=ortho_input, width=2)
+ent_minutes_a_lon.insert(0,"00")
 lbl_minutes_a_lon = tk.Label(master=ortho_input, text="'")
 ent_seconds_a_lon = tk.Entry(master=ortho_input, width=4)
+ent_seconds_a_lon.insert(0,"000")
 lbl_seconds_a_lon = tk.Label(master=ortho_input, text="''")
 
     #Point B:
@@ -138,17 +151,23 @@ e_or_w_b.set("E")
 bod_b = tk.Label(master=ortho_input, text="Coordinates of point B:  ")
 choice_ns_b = tk.OptionMenu(ortho_input, n_or_s_b, "N", "S")
 ent_degrees_b_lat = tk.Entry(master=ortho_input, width=3)
+ent_degrees_b_lat.insert(0,"00")
 lbl_degrees_b_lat = tk.Label(master=ortho_input, text="°")
 ent_minutes_b_lat = tk.Entry(master=ortho_input, width=2)
+ent_minutes_b_lat.insert(0,"00")
 lbl_minutes_b_lat = tk.Label(master=ortho_input, text="'")
 ent_seconds_b_lat = tk.Entry(master=ortho_input, width=4)
+ent_seconds_b_lat.insert(0,"000")
 lbl_seconds_b_lat = tk.Label(master=ortho_input, text="''")
 choice_ew_b = tk.OptionMenu(ortho_input, e_or_w_b, "E", "W")
 ent_degrees_b_lon = tk.Entry(master=ortho_input, width=3)
+ent_degrees_b_lon.insert(0,"00")
 lbl_degrees_b_lon = tk.Label(master=ortho_input, text="°")
 ent_minutes_b_lon = tk.Entry(master=ortho_input, width=2)
+ent_minutes_b_lon.insert(0,"00")
 lbl_minutes_b_lon = tk.Label(master=ortho_input, text="'")
 ent_seconds_b_lon = tk.Entry(master=ortho_input, width=4)
+ent_seconds_b_lon.insert(0,"000")
 lbl_seconds_b_lon = tk.Label(master=ortho_input, text="''")
 
 #GRIDS_INPUTS
