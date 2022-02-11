@@ -28,7 +28,6 @@ def interval_control(c, a, b, text):
         error_g = True
         showinfo("Invalid coordinates!", f"{text} have to be integer between {a} and {b}. This condition was not met.\nTry again after correcting the input data.")
 
-
 def earn_numbers(latlon, degrees, minutes, seconds):
     """Function treats exceptions and invalid inputs of degrees, minutes and seconds of latitude and longitude. Returns degrees, minutes and seconds.
 
@@ -106,6 +105,21 @@ def click_ortho_button():
         lbl_result = tk.Label(master=window, text = f"Orthodrome lenght is {c} km.")
         lbl_result.grid(row=2, column=0, pady=10)
 
+def enter_is_within(P, a, b):
+    a = int(a)
+    b = int(b)
+    try:
+        P = int(P)
+    except:
+        return False
+    if P<a or P>b:
+        return False
+    else:
+        return True
+
+def enter_wrong(a,b, dg_min_sc):
+    showinfo("Invalid input!", f"Invalid input! Insert integer between {a} and {b} in the {dg_min_sc} field.")
+
 #MAIN_WINDOW
 window = tk.Tk()
 window.title("Orthodrome lenght")
@@ -119,6 +133,9 @@ n_or_s = tk.StringVar(ortho_input)
 n_or_s.set("N")
 e_or_w = tk.StringVar(ortho_input)
 e_or_w.set("E")
+
+reg = window.register(enter_is_within)
+inv = window.register(enter_wrong)
 
 bod_a = tk.Label(master=ortho_input, text="Coordinates of point A:  ")
 choice_ns = tk.OptionMenu(ortho_input, n_or_s, "N", "S")
@@ -150,7 +167,7 @@ e_or_w_b.set("E")
 
 bod_b = tk.Label(master=ortho_input, text="Coordinates of point B:  ")
 choice_ns_b = tk.OptionMenu(ortho_input, n_or_s_b, "N", "S")
-ent_degrees_b_lat = tk.Entry(master=ortho_input, width=3)
+ent_degrees_b_lat = tk.Entry(master=ortho_input, width=3, validate= "focusout", validatecommand= (reg, "%P",0,90), invalidcommand=(inv, 0, 90, "degrees"))
 ent_degrees_b_lat.insert(0,"00")
 lbl_degrees_b_lat = tk.Label(master=ortho_input, text="°")
 ent_minutes_b_lat = tk.Entry(master=ortho_input, width=2)
@@ -169,6 +186,7 @@ lbl_minutes_b_lon = tk.Label(master=ortho_input, text="'")
 ent_seconds_b_lon = tk.Entry(master=ortho_input, width=4)
 ent_seconds_b_lon.insert(0,"000")
 lbl_seconds_b_lon = tk.Label(master=ortho_input, text="''")
+
 
 #GRIDS_INPUTS
     #Point A:
