@@ -105,6 +105,7 @@ def click_ortho_button():
         lbl_result = tk.Label(master=window, text = f"Orthodrome lenght is {c} km.")
         lbl_result.grid(row=2, column=0, pady=10)
 
+#validate command for enters
 def enter_is_within(P, dgs):
     a = 0
     if dgs == "degrees of latitude":
@@ -122,6 +123,7 @@ def enter_is_within(P, dgs):
     else:
         return True
 
+#invalid command for enters
 def enter_wrong(dgs):
     if dgs == "degrees of latitude":
         b = 90
@@ -139,14 +141,14 @@ window.resizable(width=True, height=True)
 # INPUTS
 ortho_input = tk.Frame(master=window)
 
+reg = window.register(enter_is_within)
+inv = window.register(enter_wrong)
+
     #Point A:
 n_or_s = tk.StringVar(ortho_input)
 n_or_s.set("N")
 e_or_w = tk.StringVar(ortho_input)
 e_or_w.set("E")
-
-reg = window.register(enter_is_within)
-inv = window.register(enter_wrong)
 
 bod_a = tk.Label(master=ortho_input, text="Coordinates of point A:  ")
 choice_ns = tk.OptionMenu(ortho_input, n_or_s, "N", "S")
