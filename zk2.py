@@ -105,9 +105,14 @@ def click_ortho_button():
         lbl_result = tk.Label(master=window, text = f"Orthodrome lenght is {c} km.")
         lbl_result.grid(row=2, column=0, pady=10)
 
-def enter_is_within(P, a, b):
-    a = int(a)
-    b = int(b)
+def enter_is_within(P, dgs):
+    a = 0
+    if dgs == "degrees of latitude":
+        b = 90
+    elif dgs == "degrees of longitude":
+        b = 180
+    elif dgs == "minutes" or dgs == "seconds":
+        b = 60
     try:
         P = int(P)
     except:
@@ -117,8 +122,14 @@ def enter_is_within(P, a, b):
     else:
         return True
 
-def enter_wrong(a,b, dg_min_sc):
-    showinfo("Invalid input!", f"Invalid input! Insert integer between {a} and {b} in the {dg_min_sc} field.")
+def enter_wrong(dgs):
+    if dgs == "degrees of latitude":
+        b = 90
+    elif dgs == "degrees of longitude":
+        b = 180
+    elif dgs == "minutes" or dgs == "seconds":
+        b = 60
+    showinfo("Invalid input!", f"""Invalid input! Insert integer between 0 and {b} in the "{dgs}" field.""")
 
 #MAIN_WINDOW
 window = tk.Tk()
@@ -139,23 +150,23 @@ inv = window.register(enter_wrong)
 
 bod_a = tk.Label(master=ortho_input, text="Coordinates of point A:  ")
 choice_ns = tk.OptionMenu(ortho_input, n_or_s, "N", "S")
-ent_degrees_a_lat = tk.Entry(master=ortho_input, width=3)
+ent_degrees_a_lat = tk.Entry(master=ortho_input, width=3, validate= "focusout", validatecommand= (reg, "%P", "degrees of latitude"), invalidcommand=(inv, "degrees of latitude"))
 ent_degrees_a_lat.insert(0,"00")
 lbl_degrees_a_lat = tk.Label(master=ortho_input, text="°")
-ent_minutes_a_lat = tk.Entry(master=ortho_input, width=2)
+ent_minutes_a_lat = tk.Entry(master=ortho_input, width=2, validate= "focusout", validatecommand= (reg, "%P", "minutes"), invalidcommand=(inv, "minutes"))
 ent_minutes_a_lat.insert(0,"00")
 lbl_minutes_a_lat = tk.Label(master=ortho_input, text="'")
-ent_seconds_a_lat = tk.Entry(master=ortho_input, width=4)
+ent_seconds_a_lat = tk.Entry(master=ortho_input, width=4, validate= "focusout", validatecommand= (reg, "%P", "seconds"), invalidcommand=(inv, "seconds"))
 ent_seconds_a_lat.insert(0,"000")
 lbl_seconds_a_lat = tk.Label(master=ortho_input, text="''")
 choice_ew = tk.OptionMenu(ortho_input, e_or_w, "E", "W")
-ent_degrees_a_lon = tk.Entry(master=ortho_input, width=3)
+ent_degrees_a_lon = tk.Entry(master=ortho_input, width=3, validate= "focusout", validatecommand= (reg, "%P", "degrees of longitude"), invalidcommand=(inv, "degrees of longitude"))
 ent_degrees_a_lon.insert(0,"000")
 lbl_degrees_a_lon = tk.Label(master=ortho_input, text="°")
-ent_minutes_a_lon = tk.Entry(master=ortho_input, width=2)
+ent_minutes_a_lon = tk.Entry(master=ortho_input, width=2, validate= "focusout", validatecommand= (reg, "%P", "minutes"), invalidcommand=(inv, "minutes"))
 ent_minutes_a_lon.insert(0,"00")
 lbl_minutes_a_lon = tk.Label(master=ortho_input, text="'")
-ent_seconds_a_lon = tk.Entry(master=ortho_input, width=4)
+ent_seconds_a_lon = tk.Entry(master=ortho_input, width=4, validate= "focusout", validatecommand= (reg, "%P", "seconds"), invalidcommand=(inv, "seconds"))
 ent_seconds_a_lon.insert(0,"000")
 lbl_seconds_a_lon = tk.Label(master=ortho_input, text="''")
 
@@ -167,23 +178,23 @@ e_or_w_b.set("E")
 
 bod_b = tk.Label(master=ortho_input, text="Coordinates of point B:  ")
 choice_ns_b = tk.OptionMenu(ortho_input, n_or_s_b, "N", "S")
-ent_degrees_b_lat = tk.Entry(master=ortho_input, width=3, validate= "focusout", validatecommand= (reg, "%P",0,90), invalidcommand=(inv, 0, 90, "degrees"))
+ent_degrees_b_lat = tk.Entry(master=ortho_input, width=3, validate= "focusout", validatecommand= (reg, "%P", "degrees of latitude"), invalidcommand=(inv, "degrees of latitude"))
 ent_degrees_b_lat.insert(0,"00")
 lbl_degrees_b_lat = tk.Label(master=ortho_input, text="°")
-ent_minutes_b_lat = tk.Entry(master=ortho_input, width=2)
+ent_minutes_b_lat = tk.Entry(master=ortho_input, width=2, validate= "focusout", validatecommand= (reg, "%P", "minutes"), invalidcommand=(inv, "minutes"))
 ent_minutes_b_lat.insert(0,"00")
 lbl_minutes_b_lat = tk.Label(master=ortho_input, text="'")
-ent_seconds_b_lat = tk.Entry(master=ortho_input, width=4)
+ent_seconds_b_lat = tk.Entry(master=ortho_input, width=4, validate= "focusout", validatecommand= (reg, "%P", "seconds"), invalidcommand=(inv, "seconds"))
 ent_seconds_b_lat.insert(0,"000")
 lbl_seconds_b_lat = tk.Label(master=ortho_input, text="''")
 choice_ew_b = tk.OptionMenu(ortho_input, e_or_w_b, "E", "W")
-ent_degrees_b_lon = tk.Entry(master=ortho_input, width=3)
+ent_degrees_b_lon = tk.Entry(master=ortho_input, width=3, validate= "focusout", validatecommand= (reg, "%P", "degrees of longitude"), invalidcommand=(inv, "degrees of longitude"))
 ent_degrees_b_lon.insert(0,"00")
 lbl_degrees_b_lon = tk.Label(master=ortho_input, text="°")
-ent_minutes_b_lon = tk.Entry(master=ortho_input, width=2)
+ent_minutes_b_lon = tk.Entry(master=ortho_input, width=2, validate= "focusout", validatecommand= (reg, "%P", "minutes"), invalidcommand=(inv, "minutes"))
 ent_minutes_b_lon.insert(0,"00")
 lbl_minutes_b_lon = tk.Label(master=ortho_input, text="'")
-ent_seconds_b_lon = tk.Entry(master=ortho_input, width=4)
+ent_seconds_b_lon = tk.Entry(master=ortho_input, width=4, validate= "focusout", validatecommand= (reg, "%P", "seconds"), invalidcommand=(inv, "seconds"))
 ent_seconds_b_lon.insert(0,"000")
 lbl_seconds_b_lon = tk.Label(master=ortho_input, text="''")
 
